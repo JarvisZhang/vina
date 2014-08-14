@@ -34,7 +34,7 @@ struct precalculate_element {
 		assert(i < fast.size()); 
 		return fast[i];
 	}
-	pr eval_deriv(fl r2) const {
+	__declspec(target(mic:0)) pr eval_deriv(fl r2) const {
 		fl r2_factored = factor * r2;
 		assert(r2_factored + 1 < smooth.size());
 		sz i1 = sz(r2_factored); 
@@ -138,7 +138,7 @@ struct precalculate {
 		assert(r2 <= m_cutoff_sqr);
 		return data(type_pair_index).eval_fast(r2);
 	}
-	pr eval_deriv(sz type_pair_index, fl r2) const {
+	__declspec(target(mic:0)) pr eval_deriv(sz type_pair_index, fl r2) const {
 		assert(r2 <= m_cutoff_sqr);
 		return data(type_pair_index).eval_deriv(r2);
 	}

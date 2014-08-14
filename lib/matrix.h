@@ -28,10 +28,10 @@
 
 // these 4 lines are used 3 times verbatim - defining a temp macro to ease the pain
 #define VINA_MATRIX_DEFINE_OPERATORS \
-	const T& operator()(sz i) const { return m_data[i]; } \
-	      T& operator()(sz i)       { return m_data[i]; } \
-	const T& operator()(sz i, sz j) const { return m_data[index(i, j)]; } \
-	      T& operator()(sz i, sz j)       { return m_data[index(i, j)]; } 
+	__declspec(target(mic:0)) const T& operator()(sz i) const { return m_data[i]; } \
+	__declspec(target(mic:0))       T& operator()(sz i)       { return m_data[i]; } \
+	__declspec(target(mic:0)) const T& operator()(sz i, sz j) const { return m_data[index(i, j)]; } \
+	__declspec(target(mic:0))       T& operator()(sz i, sz j)       { return m_data[index(i, j)]; } 
 
 template<typename T>
 class matrix {

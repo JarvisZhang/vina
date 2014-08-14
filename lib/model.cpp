@@ -617,6 +617,7 @@ fl eval_interacting_pairs(const precalculate& p, fl v, const interacting_pairs& 
 fl eval_interacting_pairs_deriv(const precalculate& p, fl v, const interacting_pairs& pairs, const vecv& coords, vecv& forces) { // adds to forces  // clean up
 	const fl cutoff_sqr = p.cutoff_sqr();
 	fl e = 0;
+	#pragma offload target(mic:0)
 	VINA_FOR_IN(i, pairs) {
 		const interacting_pair& ip = pairs[i];
 		vec r; r = coords[ip.b] - coords[ip.a]; // a -> b

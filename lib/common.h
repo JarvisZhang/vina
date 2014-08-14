@@ -45,7 +45,7 @@
 typedef double fl;
 
 template<typename T>
-T sqr(T x) {
+__declspec(target(mic:0)) T sqr(T x) {
 	return x*x;
 }
 
@@ -226,15 +226,15 @@ bool eq(const std::vector<T>& a, const std::vector<T>& b) {
 	return true;
 }
 
-const fl max_fl = (std::numeric_limits<fl>::max)();
+__declspec(target(mic:0)) const fl max_fl = (std::numeric_limits<fl>::max)();
 const sz max_sz = (std::numeric_limits<sz>::max)();
 const unsigned max_unsigned = (std::numeric_limits<unsigned>::max)();
-const fl epsilon_fl = std::numeric_limits<fl>::epsilon();
+__declspec(target(mic:0)) const fl epsilon_fl = std::numeric_limits<fl>::epsilon();
 
 const vec zero_vec(0, 0, 0);
 const vec max_vec(max_fl, max_fl, max_fl);
 
-inline bool not_max(fl x) {
+__declspec(target(mic:0)) inline bool not_max(fl x) {
 	return (x < 0.1 * max_fl);
 }
 
@@ -244,7 +244,7 @@ inline fl vec_distance_sqr(const vec& a, const vec& b) {
 		   sqr(a[2] - b[2]);
 }
 
-inline fl sqr(const vec& v) {
+__declspec(target(mic:0)) inline fl sqr(const vec& v) {
 	return sqr(v[0]) + sqr(v[1]) + sqr(v[2]);
 }
 
