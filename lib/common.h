@@ -23,6 +23,8 @@
 #ifndef VINA_COMMON_H
 #define VINA_COMMON_H
 
+#ifdef __MIC__
+#pragma offload_attribute (push, target(mic))
 #include <cassert>
 #include <string>
 #include <limits>
@@ -35,6 +37,21 @@
 #include <iomanip> // to_string
 #include <sstream> // to_string
 #include <string> // probably included by the above anyway, common anyway
+#pragma offload_attribute (pop)
+#else
+#include <cassert>
+#include <string>
+#include <limits>
+#include <utility> // pair
+#include <algorithm> // too common
+#include <vector> // used in typedef, and commonly used overall
+#include <cmath> // commonly used
+#include <iostream> // various debugging everywhere
+#include <fstream> // print_coords
+#include <iomanip> // to_string
+#include <sstream> // to_string
+#include <string> // probably included by the above anyway, common anyway
+#endif
 
 #include <boost/serialization/vector.hpp> // can't come before the above two - wart fixed in upcoming Boost versions
 #include <boost/serialization/base_object.hpp> // movable_atom needs it - (derived from atom)

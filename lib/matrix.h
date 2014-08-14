@@ -23,7 +23,14 @@
 #ifndef VINA_MATRIX_H
 #define VINA_MATRIX_H
 
+#ifdef __MIC__
+#pragma offload_attribute (push, target(mic))
 #include <vector>
+#pragma offload_attribute (pop)
+#else
+#include <vector>
+#endif
+
 #include "triangular_matrix_index.h"
 
 // these 4 lines are used 3 times verbatim - defining a temp macro to ease the pain
