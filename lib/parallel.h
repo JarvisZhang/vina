@@ -36,7 +36,8 @@
 template<typename F, bool Sync = false>
 struct parallel_for : private boost::thread_group {
 	parallel_for(const F* f, sz num_threads) : m_f(f), destructing(false), size(0), thread_finished(num_threads, true), count_finished(0), num_threads(num_threads) {
-        VINA_FOR(i, num_threads)
+        printf("%d\n", num_threads);
+		VINA_FOR(i, num_threads)
             create_thread(aux(i, this));
     }
 	void run(sz size_) {
@@ -99,7 +100,7 @@ template<typename F>
 struct parallel_for<F, true> : private boost::thread_group {
 	parallel_for(const F* f, sz num_threads) : m_f(f), destructing(false), size(0), started(0), finished(0) {
 		a.par = this; // VC8 warning workaround
-        VINA_FOR(i, num_threads)
+		VINA_FOR(i, num_threads)
             create_thread(boost::ref(a));
     }
 	void run(sz size_) {

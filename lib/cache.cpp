@@ -17,7 +17,10 @@
    Author: Dr. Oleg Trott <ot14@columbia.edu>, 
            The Olson Lab, 
            The Scripps Research Institute
-
+	
+	Modified by: Jarvis Zhang <zuowzhang@outlook.com>
+	Date	   : 2014-08-20
+	
 */
 
 #include <algorithm> // fill, etc
@@ -41,6 +44,8 @@
 #include "cache.h"
 #include "file.h"
 #include "szv_grid.h"
+
+#include <cilk.h> // modified by Jarvis Zhang<zuowzhang@outlook.com>
 
 cache::cache(const std::string& scoring_function_version_, const grid_dims& gd_, fl slope_, atom_type::t atom_typing_used_) 
 : scoring_function_version(scoring_function_version_), gd(gd_), slope(slope_), atu(atom_typing_used_), grids(num_atom_types(atom_typing_used_)) {}
@@ -110,6 +115,7 @@ void cache::load(Archive& ar, const unsigned version) {
 
 void cache::populate(const model& m, const precalculate& p, const szv& atom_types_needed, bool display_progress) {
 	szv needed;
+	
 	VINA_FOR_IN(i, atom_types_needed) {
 		sz t = atom_types_needed[i];
 		if(!grids[t].initialized()) {
@@ -119,7 +125,7 @@ void cache::populate(const model& m, const precalculate& p, const szv& atom_type
 	}
 	if(needed.empty())
 		return;
-	flv affinities(needed.size());
+	//flv affinities(needed.size()); // modified by Jarvis Zhang<zuowzhang@outlook.com>
 
 	sz nat = num_atom_types(atu);
 
@@ -130,12 +136,16 @@ void cache::populate(const model& m, const precalculate& p, const szv& atom_type
 	grid_dims gd_reduced = szv_grid_dims(gd);
 	szv_grid ig(m, gd_reduced, cutoff_sqr);
 
-	VINA_FOR(x, g.m_data.dim0()) {
+	//VINA_FOR(x, g.m_data.dim0()) {
+	cilk_for(std::size_t x = 0; x < g.m_data.dim0(); ++x) { // modified by Jarvis Zhang<zuowzhang@outlook.com>
 		VINA_FOR(y, g.m_data.dim1()) {
 			VINA_FOR(z, g.m_data.dim2()) {
+				flv affinities(needed.size()); // modified by Jarvis Zhang<zuowzhang@outlook.com>
 				std::fill(affinities.begin(), affinities.end(), 0);
 				vec probe_coords; probe_coords = g.index_to_argument(x, y, z);
 				const szv& possibilities = ig.possibilities(probe_coords);
+				
+				std::size_t possibilities_n = possibilities.size(); 
 				VINA_FOR_IN(possibilities_i, possibilities) {
 					const sz i = possibilities[possibilities_i];
 					const atom& a = m.grid_atoms[i];
@@ -151,6 +161,8 @@ void cache::populate(const model& m, const precalculate& p, const szv& atom_type
 						}
 					}
 				}
+				
+				std::size_t need_n = needed.size(); 
 				VINA_FOR_IN(j, needed) {
 					sz t = needed[j];
 					assert(t < nat);
